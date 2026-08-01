@@ -12,21 +12,20 @@ import com.rajiv.paisatrack.widget.SpendWidget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val _txns = MutableStateFlow<List<Txn>>(emptyList())
-    val summary: StateFlow<Summary.Result> = MutableStateFlow(Summary.compute(emptyList()))
+    private var txns: List<Txn> = emptyList()
 
-    private fun recompute() {
-        (summary as MutableStateFlow).value = Summary.compute(_txns.value)
-    }
+    private val _summary = MutableStateFlow(Summary.compute(emptyList()))
+    val summary: StateFlow<Summary.Result> = _summary.asStateFlow()
 
     fun reload() {
-        _txns.value = Store.load(getApplication())
-        recompute()
+        txns = Store.load(getApplication())
+        _summary.value = Summary.compute(txns)
     }
 
     fun importInbox() {
@@ -47,7 +46,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun groupByKey(key: String): Summary.Group? {
-        val s = summary.value
+        val s = _summary.value
         return (s.cards + s.accounts).find { it.key == key }
     }
 }
