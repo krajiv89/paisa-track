@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PaisaTrack</string>
+    <string name="widget_desc">Your spends at a glance</string>
+</resources>
