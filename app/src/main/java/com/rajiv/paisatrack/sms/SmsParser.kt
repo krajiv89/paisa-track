@@ -90,7 +90,7 @@ object SmsParser {
             val m = p.re.find(body) ?: continue
             val f = p.build(m)
             val epoch = epochOf(f.date, f.time, fallbackMillis)
-            val kindFull = f.kind + (f.via?.let { " · $it" } ?: "")
+            val kindFull = p.kind + (f.via?.let { " · $it" } ?: "")
             val id = sha("${p.bank}|${f.source}|${f.amount}|${f.date}|${f.time}|${f.merchant}")
             return Txn(
                 id = id,
